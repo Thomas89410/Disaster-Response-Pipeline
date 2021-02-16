@@ -49,9 +49,9 @@ def build_model():
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    
+   # I had to set the paramters to 1, because otherwise the pkl. file would have been to big to upload to github
     parameters = {
-        'clf__estimator__n_estimators': [20, 50],
+        'clf__estimator__n_estimators': [1],
        
     }
     model = GridSearchCV(pipeline, param_grid=parameters, n_jobs=4, verbose=2)
