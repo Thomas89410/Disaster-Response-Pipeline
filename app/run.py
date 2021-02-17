@@ -1,37 +1,20 @@
-import sys
-import nltk
-import numpy as np
-nltk.download(['punkt', 'wordnet'])
-from nltk.tokenize import word_tokenize, RegexpTokenizer
-from nltk.stem import WordNetLemmatizer
+import json
+import plotly
 import pandas as pd
-from sqlalchemy import create_engine
-import re
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier
-from sklearn.multioutput import MultiOutputClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.metrics import precision_recall_fscore_support
-from sklearn.tree import DecisionTreeClassifier
-import pickle
 
-def load_data(database_filepath):
-    engine = create_engine('sqlite:///DisasterResponse.db')
-    df = pd.read_sql ('SELECT * FROM DisasterResponse', engine)
-    X = df.message
-    y = df[df.columns[4:]]
-    category_names = y.columns
-    return X, y, category_names 
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
+from flask import Flask
+from flask import render_template, request, jsonify
+from plotly.graph_objs import Bar, Scatter
+from sklearn.externals import joblib
+from sqlalchemy import create_engine
+
+
+app = Flask(__name__)
 
 def tokenize(text):
-    url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-    detected_urls = re.findall(url_regex, text)
-    for url in detected_urls:
-        text = text.replace(url, "urlplaceholder")
-
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -40,61 +23,102 @@ def tokenize(text):
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
         clean_tokens.append(clean_tok)
 
-    return clean_tokens  
+    return clean_tokens
+
+# load data
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+df = pd.read_sql_table('MessagesCategories', engine)
+
+# load model
+model = joblib.load("../models/classifier.pkl")
 
 
-def build_model():
-    pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize)),
-        ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
-    ])
+# index webpage displays cool visuals and receives user input text for model
+@app.route('/')
+@app.route('/index')
+def index():
     
-    parameters = {
-        'clf__estimator__n_estimators': [20, 50],
-       
-    }
-    model = GridSearchCV(pipeline, param_grid=parameters, n_jobs=4, verbose=2)
-    return model
+    # extract data needed for visuals
+    # TODO: Below is an example - modify to extract data for your own visuals
+    genre_counts = df.groupby('genre').count()['message']
+    genre_names = list(genre_counts.index)
+    
+    categories_count = df.iloc[:,4:].sum()
+    category_names = df.iloc[:,4:].columns
+    category_boolean = (df.iloc[:,4:] != 0).sum().values
+    
+    # create visuals
+    # TODO: Below is an example - modify to create your own visuals
+    graphs = [
+        {
+            'data': [
+                Bar(
+                    x=genre_names,
+                    y=genre_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
+                }
+            }
+        },
+        
+   # create 2nd visuals
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_boolean
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category",
+                    'tickangle': 60
+                }
+            }
+        }
+    ]
+        
+    # encode plotly graphs in JSON
+    ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
+    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # render web page with plotly graphs
+    return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
 
-def evaluate_model(model, X_test, y_test, category_names):
-    y_pred = model.predict(X_test)
-    for i in range(30):
-        print(y_test.columns[i], ':')
-        print(classification_report(y_test.iloc[:,i], y_pred[:,i]), '________________________')
+# web page that handles user query and displays model results
+@app.route('/go')
+def go():
+    # save user input in query
+    query = request.args.get('query', '') 
 
-def save_model(model, model_filepath):
-    with open('classifier.pkl', 'wb') as file:
-        pickle.dump(optimised_model, file)
+    # use model to predict classification for query
+    classification_labels = model.predict([query])[0]
+    classification_results = dict(zip(df.columns[4:], classification_labels))
+
+    # This will render the go.html Please see that file. 
+    return render_template(
+        'go.html',
+        query=query,
+        classification_result=classification_results
+    )
 
 
 def main():
-    if len(sys.argv) == 3:
-        database_filepath, model_filepath = sys.argv[1:]
-        print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, y, category_names = load_data(database_filepath)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        
-        print('Building model...')
-        model = build_model()
-        
-        print('Training model...')
-        model.fit(X_train, y_train)
-        
-        print('Evaluating model...')
-        evaluate_model(model, X_test, y_test, category_names)
-
-        print('Saving model...\n    MODEL: {}'.format(model_filepath))
-        save_model(model, model_filepath)
-
-        print('Trained model saved!')
-
-    else:
-        print('Please provide the filepath of the disaster messages database '\
-              'as the first argument and the filepath of the pickle file to '\
-              'save the model to as the second argument. \n\nExample: python '\
-              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
+    app.run(host='0.0.0.0', port=3001, debug=True)
 
 
 if __name__ == '__main__':
