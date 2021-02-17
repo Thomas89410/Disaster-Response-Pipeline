@@ -19,8 +19,8 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 def load_data(database_filepath):
-    engine = create_engine('sqlite:///DisasterResponse.db')
-    df = pd.read_sql ('SELECT * FROM DisasterResponse', engine)
+    engine = create_engine('sqlite:///../data/DisasterResponse.db')
+    df = pd.read_sql ('SELECT * FROM MessagesCategories', engine)
     X = df.message
     y = df[df.columns[4:]]
     category_names = y.columns
@@ -66,7 +66,7 @@ def evaluate_model(model, X_test, y_test, category_names):
 
 def save_model(model, model_filepath):
     with open('classifier.pkl', 'wb') as file:
-        pickle.dump(optimised_model, file)
+        pickle.dump(model, file)
 
 
 def main():
