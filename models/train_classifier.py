@@ -19,8 +19,8 @@ from sklearn.tree import DecisionTreeClassifier
 import pickle
 
 def load_data(database_filepath):
-    engine = create_engine('sqlite:///DisasterResponse.db')
-    df = pd.read_sql ('SELECT * FROM DisasterResponse', engine)
+    engine = create_engine('sqlite:///../data/DisasterResponse.db')
+    df = pd.read_sql_table('MessagesCategories', engine)
     X = df.message
     y = df[df.columns[4:]]
     category_names = y.columns
@@ -49,9 +49,9 @@ def build_model():
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    
+   # I had to set the paramters to 1, because otherwise the pkl. file would have been to big to upload to github
     parameters = {
-        'clf__estimator__n_estimators': [20, 50],
+        'clf__estimator__n_estimators': [1],
        
     }
     model = GridSearchCV(pipeline, param_grid=parameters, n_jobs=4, verbose=2)
@@ -66,7 +66,7 @@ def evaluate_model(model, X_test, y_test, category_names):
 
 def save_model(model, model_filepath):
     with open('classifier.pkl', 'wb') as file:
-        pickle.dump(optimised_model, file)
+        pickle.dump(model, file)
 
 
 def main():
