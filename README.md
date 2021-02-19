@@ -3,19 +3,30 @@
 ## Project Description
 I built a model, that helps classifying messages into categories that are sent during times of disasters. We are using a total of 36 default categories (e. g. Medical Products, Medical Help, etc.). THe objective of my model is to make sure that the messages are sent to the appropriate disaster relief agency
 
-This project will involve the building of a basic ETL and Machine Learning pipeline to facilitate the task. This is also a multi-label classification task, since a message can belong to one or more categories. We will be working with a data set provided by [Figure Eight](https://www.figure-eight.com/) containing real messages that were sent during disaster events.
+From a technical perspective, I built an ETL and ML pipeline to execute the needed steps, which allow sorting the input messaage to one or more categories. The used data was provided by Figure Eight, which allows to work on real messages from past disasters. 
 
-Finally, this project contains a web app where you can input a message and get classification results.
+In order to provide the user with a usability optimised entry point, I also created an app, which can be used to insert messages that will then in turn get classified.
 
 ## File Descriptions
-1. App folder including the templates folder and "run.py" for the web application
-2. Data folder containing "DisasterResponse.db", "disaster_categories.csv", "disaster_messages.csv" and "process_data.py" for data cleaning and transfering.
-3. Models folder including "classifier.pkl" and "train_classifier.py" for the Machine Learning model.
-4. README file
-5. Preparation folder containing 6 different files, which were used for the project building. (Please note: this folder is not necessary for this project to run.)
+1. app
+    a. templates
+        i. go.html
+        ii. master.html
+    b. run.py
+2. data
+    a. DisasterResponse.db
+    b. ETL Pipeline Preparation.ipynb
+    c. disaster_categories.csv
+    d. disaster_messages.csv
+    e. process_data.py
+3. models
+    a. ML Pipelone Preparation.ipynb
+    b. classifier.pkl
+    c. train_classifier.py
+4. README.md
 
 ## Instructions
-1. Run the following commands in the project's root directory to set up your database and model.
+1. In order to use the projects output please run the following commands in the project's root directory to set up your database and model.
 
     - To run ETL pipeline that cleans data and stores in database
         `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
@@ -28,3 +39,6 @@ Finally, this project contains a web app where you can input a message and get c
 3. Go to http://0.0.0.0:3001/
 
 ## Sceenshots
+
+
+
