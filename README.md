@@ -44,5 +44,5 @@ In order to provide the user with a usability optimised entry point, I also crea
 
 ## Sceenshots
 
-![Test](screenshots/Screenshot 1.png)
+![Test](Screenshot1.png)
 
