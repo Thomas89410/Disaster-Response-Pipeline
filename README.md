@@ -44,5 +44,5 @@ In order to provide the user with a usability optimised entry point, I also crea
 
 ## Sceenshots
 
-![Main Page](screenshots/Screenshot 1.png)
+![Test](screenshots/Screenshot 1.png)
 
