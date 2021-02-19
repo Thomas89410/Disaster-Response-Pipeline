@@ -40,5 +40,5 @@ In order to provide the user with a usability optimised entry point, I also crea
 
 ## Sceenshots
 
-<img src="assets/disaster-response-project1.png" width="80%" alt="disaster response project web app">
+
 
