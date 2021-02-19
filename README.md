@@ -23,7 +23,11 @@ In order to provide the user with a usability optimised entry point, I also crea
     a. ML Pipelone Preparation.ipynb
     b. classifier.pkl
     c. train_classifier.py
-4. README.md
+4. screenshots
+    a. Screenshot 1.png
+    b. Screenshot 2.png
+    c. Screenshot 3.png
+5. README.md
 
 ## Instructions
 1. In order to use the projects output please run the following commands in the project's root directory to set up your database and model.
@@ -40,5 +44,5 @@ In order to provide the user with a usability optimised entry point, I also crea
 
 ## Sceenshots
 
-
+![Main Page](screenshots/Screenshot 1.png)
 
