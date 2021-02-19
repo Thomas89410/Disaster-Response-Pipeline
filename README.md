@@ -23,10 +23,10 @@ In order to provide the user with a usability optimised entry point, I also crea
     a. ML Pipelone Preparation.ipynb
     b. classifier.pkl
     c. train_classifier.py
-4. screenshots
-    a. Screenshot 1.png
-    b. Screenshot 2.png
-    c. Screenshot 3.png
+4. screenshot
+    a. Screenshot_1.png
+    b. Screenshot_2.png
+    c. Screenshot_3.png
 5. README.md
 
 ## Instructions
@@ -45,4 +45,8 @@ In order to provide the user with a usability optimised entry point, I also crea
 ## Sceenshots
 
 ![Test](screenshot/Screenshot_1.png)
+
+![Test](screenshot/Screenshot_2.png)
+
+![Test](screenshot/Screenshot_3.png)
 
