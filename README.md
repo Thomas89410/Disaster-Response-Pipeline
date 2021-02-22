@@ -42,6 +42,9 @@ In order to provide the user with a usability optimised entry point, I also crea
     
 3. Go to http://0.0.0.0:3001/
 
+4. Link to my Github Repo containing all files and scripts that need to be run.
+    https://github.com/Thomas89410/Disaster-Response-Pipeline
+
 ## Sceenshots
 
 ![Test](screenshot/Screenshot_1.png)
