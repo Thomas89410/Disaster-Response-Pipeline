@@ -31,6 +31,9 @@ def load_data(messages_filepath, categories_filepath):
     # convert column from string to numeric
         categories[column] = pd.to_numeric(categories[column])
     
+    # make sure only binary, 1 and 0, values remain    
+    categories = (categories > 0).astype(int)
+    
     # drop the original categories column from `df`
     df.drop(['categories'], axis=1, inplace=True)
     
